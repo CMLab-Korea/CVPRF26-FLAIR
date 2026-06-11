@@ -333,10 +333,10 @@ If you find our work useful for your research, please consider citing:
 
 ```bibtex
 @inproceedings{ko2026flair,
-  title     = {FLAIR: Frequency- and Locality-Aware Implicit Neural Representations},
-  author    = {Ko, Sukhun and Youn, Seokhyun and Kye, Dahyeon and Min, Kyle and Eom, Chanho and Oh, Jihyong},
-  booktitle = {Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition Findings},
-  year      = {2026},
-  note      = {To appear}
+  title={FLAIR: Frequency-and Locality-Aware Implicit Neural Representations},
+  author={Ko, Sukhun and Youn, Seokhyun and Kye, Dahyeon and Min, Kyle and Eom, Chanho and Oh, Jihyong},
+  booktitle={Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition},
+  pages={4877--4887},
+  year={2026}
 }
 ```
