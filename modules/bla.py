@@ -63,7 +63,7 @@ class INR(nn.Module):
                  scale=1.0, pos_encode=False, sidelength=None, fn_samples=None,
                  use_nyquist=True,
                  init_T=1.0, init_beta=0.05, init_zeta=0.1,
-                 use_sigmoid=True, **kwargs):
+                 use_sigmoid=True, *, trainable=True, **kwargs):
         super().__init__()
         self.pos_encode = pos_encode
 
@@ -74,11 +74,11 @@ class INR(nn.Module):
         self.net = []
         # hidden_layers == total BLABlocks (1 first + hidden_layers-1 hidden)
         self.net.append(BLABlock(in_features, hidden_features, is_first=True,
-                                 sigma=scale,
+                                 sigma=scale, trainable=trainable,
                                  init_T=init_T, init_beta=init_beta, init_zeta=init_zeta))
         for _ in range(hidden_layers - 1):
             self.net.append(BLABlock(hidden_features, hidden_features, is_first=False,
-                                     sigma=scale,
+                                     sigma=scale, trainable=trainable,
                                      init_T=init_T, init_beta=init_beta, init_zeta=init_zeta))
         self.net.append(_FinalLinear(hidden_features, out_features))
         self.net = nn.Sequential(*self.net)

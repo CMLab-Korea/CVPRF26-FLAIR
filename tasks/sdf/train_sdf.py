@@ -1,5 +1,6 @@
 import sys
 import os
+from argparse import ArgumentTypeError
 _THIS_DIR = os.path.dirname(os.path.abspath(__file__))               # tasks/sdf/
 sys.path.insert(0, os.path.join(_THIS_DIR, 'lib'))                   # bacon helpers
 sys.path.insert(0, os.path.dirname(os.path.dirname(_THIS_DIR)))      # FLAIR root → modules.bla
@@ -16,6 +17,16 @@ import loss_functions
 from functools import partial
 
 torch.set_num_threads(8)
+
+
+def str2bool(value):
+    normalized = value.lower()
+    if normalized in ("true", "1", "yes", "y", "t"):
+        return True
+    if normalized in ("false", "0", "no", "n", "f"):
+        return False
+    raise ArgumentTypeError(f"expected a boolean value, got {value!r}")
+
 
 p = configargparse.ArgumentParser()
 
@@ -73,7 +84,7 @@ p.add_argument('--init_zeta', type=float, default=1.0,
                help='initial zeta parameter for RC-Gauss')
 p.add_argument('--sigma', type=float, default=30.0,
                help='initial Gaussian sigma parameter for RC-Gauss')
-p.add_argument('--trainable', type=bool, default=True,
+p.add_argument('--trainable', type=str2bool, default=True,
                help='whether RC-Gauss parameters are learnable')
 
 
@@ -163,7 +174,7 @@ class BLAforSDF(torch.nn.Module):
     dict-based forward interface used by training/loss code.
     use_fast=True swaps cfloat `bla` → real-valued `bla_float` (compile-compatible)."""
     def __init__(self, hidden_features, hidden_layers, scale,
-                 init_T, init_beta, init_zeta, use_fast=False):
+                 init_T, init_beta, init_zeta, use_fast=False, *, trainable=True):
         super().__init__()
         if use_fast:
             from modules.bla_float import INR
@@ -175,6 +186,7 @@ class BLAforSDF(torch.nn.Module):
             scale=scale,
             init_T=init_T, init_beta=init_beta, init_zeta=init_zeta,
             use_sigmoid=False,
+            trainable=trainable,
         )
 
     def forward(self, model_input):
@@ -198,6 +210,7 @@ def init_model(opt):
         init_beta=opt.init_beta,
         init_zeta=opt.init_zeta,
         use_fast=getattr(opt, 'fast', False),
+        trainable=getattr(opt, 'trainable', True),
     )
 
     if getattr(opt, 'fast', False):
